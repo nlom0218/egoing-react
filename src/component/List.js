@@ -8,7 +8,7 @@ class List extends Component {
             <ul id="jsList">
                 {data.map(item => {
                     return <li key={item.id}>
-                        <a href={item.id}>{item.title}</a>
+                        <a id={item.id} href={item.id} onClick={this.props.onChangePage}>{item.title}</a>
                     </li>
                 })}
             </ul>

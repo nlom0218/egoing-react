@@ -4,12 +4,13 @@ import List from "./component/List"
 import ReadContent from "./component/ReadContent"
 import Control from "./component/Control";
 import CreateContent from "./component/CreateContent";
+import UpdateContent from "./component/UpdateContent";
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      mode: "read",
+      mode: "welcome",
       welcome: { title: "Welcome", desc: "Hello React!!" },
       subject: {
         title: "React",
@@ -23,7 +24,7 @@ class App extends Component {
       ]
     }
   }
-  render() {
+  getContent = () => {
     let _title, _desc, _content = null
     if (this.state.mode === "welcome") {
       _title = this.state.welcome.title
@@ -36,11 +37,45 @@ class App extends Component {
       _content = <ReadContent title={_title} desc={_desc} />
     } else if (this.state.mode === "create") {
       _content = <CreateContent onSubmit={(_title, _desc) => {
+        const id = Date.now()
         this.setState({
-          contents: [...this.state.contents, { id: Date.now(), title: _title, desc: _desc }]
+          contents: [...this.state.contents, { id, title: _title, desc: _desc }],
+          mode: "read",
+          content_id: id
         })
       }} />
+    } else if (this.state.mode === "update") {
+      const content = this.state.contents.find(element => element.id === this.state.content_id)
+      _title = content.title
+      _desc = content.desc
+      _content = <UpdateContent title={_title} desc={_desc} id={content.id}
+        onSubmit={(id, title, desc) => {
+          const modifyContents = this.state.contents.map((content) => {
+            if (id === content.id) {
+              return { id, title, desc }
+            } else {
+              return content
+            }
+          })
+          this.setState({
+            contents: modifyContents,
+            mode: "read",
+            content_id: id
+          })
+        }} />
+    } else if (this.state.mode === "delete") {
+      const deletedContents = this.state.contents.filter((content) => {
+        return content.id !== this.state.content_id
+      })
+      this.setState({
+        contents: deletedContents,
+        mode: "welcome"
+      })
     }
+    return _content
+  }
+  render() {
+
     return <div>
       <Subject
         title={this.state.subject.title}
@@ -63,7 +98,7 @@ class App extends Component {
           content_id = parseInt(content_id)
           this.setState({ mode: "read", content_id })
         }} />
-      {_content}
+      {this.getContent()}
     </div >
   }
 }

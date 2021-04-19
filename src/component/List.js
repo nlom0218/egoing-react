@@ -4,7 +4,7 @@ class List extends Component {
     render() {
         const { data } = this.props
         return <div>
-            <h3>List of Study</h3>
+            <h3>List of Study Hello~~</h3>
             <ul id="jsList">
                 {data.map(item => {
                     return <li key={item.id}>
